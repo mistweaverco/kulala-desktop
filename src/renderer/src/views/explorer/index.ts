@@ -5,21 +5,30 @@ import type { Document } from '../../../../main/parser/DocumentParser'
 
 export type OnSyntaxChangeHandler = (evt: Event) => void
 
-export function createOnSyntaxChangeHandler(editor: monaco.editor.IStandaloneCodeEditor) {
+export function createOnSyntaxChangeHandler(
+  editor: monaco.editor.IStandaloneCodeEditor,
+  setHeader: (header: string, value: string) => void
+): OnSyntaxChangeHandler {
   return (evt: Event): void => {
     const target = evt.target as HTMLSelectElement
     const selectedValue = target.value
 
     switch (selectedValue) {
       case 'json':
+        setHeader('content-type', 'application/json')
         editor.setModel(monaco.editor.createModel(editor.getValue(), 'json'))
         break
       case 'html':
+        setHeader('content-type', 'text/html')
+        editor.setModel(monaco.editor.createModel(editor.getValue(), 'html'))
+        break
       case 'xml':
+        setHeader('content-type', 'text/xml')
         editor.setModel(monaco.editor.createModel(editor.getValue(), 'html'))
         break
       case 'text':
       default:
+        setHeader('content-type', 'text/plain')
         editor.setModel(monaco.editor.createModel(editor.getValue(), 'text'))
         break
     }

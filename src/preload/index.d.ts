@@ -12,6 +12,10 @@ declare global {
     KulalaApi: {
       getAppVersion: () => Promise<string>
       pickFiles: () => Promise<FileInfo[]>
+      sendRequest: (
+        block: Block,
+        requestSeparatorText: string
+      ) => Promise<{ success: boolean; responseBody: string }>
     }
   }
 }

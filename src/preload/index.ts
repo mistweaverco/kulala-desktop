@@ -1,7 +1,8 @@
 import { ipcRenderer } from 'electron'
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { LayoutData } from '../main/stateKeeper'
+import { LayoutData, SessionState } from '../main/stateKeeper'
+import { Block } from '../main/parser/DocumentParser'
 
 type DBFilesRow = {
   collection: string
@@ -41,6 +42,18 @@ const KulalaApi = {
   },
   getLayout: async (): Promise<LayoutData> => {
     return await ipcRenderer.invoke('getLayout')
+  },
+  saveSession: async (s: SessionState): Promise<void> => {
+    await ipcRenderer.invoke('saveSession', s)
+  },
+  getSession: async (): Promise<SessionState> => {
+    return await ipcRenderer.invoke('getSession')
+  },
+  saveDocumentModel: async (doc: Document, fp: string): Promise<boolean> => {
+    return await ipcRenderer.invoke('saveDocumentModel', doc, fp)
+  },
+  sendRequest: async (block: Block): Promise<{ success: boolean; responseBody: string }> => {
+    return await ipcRenderer.invoke('sendRequest', block)
   }
 }
 

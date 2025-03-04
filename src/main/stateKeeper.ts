@@ -18,6 +18,46 @@ type WindowStateKeeper = WindowState & {
   track: (win: Electron.BrowserWindow) => void
 }
 
+export interface SessionState {
+  activeCollectionName: string | null
+  activeFileFilepath: string | null
+  activeRequestIdx: number | null
+}
+
+interface SessionStateKeeper {
+  saveState: (s: SessionState) => Promise<void>
+  getState: () => Promise<SessionState>
+}
+
+export const sessionStateKeeper = async (): Promise<SessionStateKeeper> => {
+  let sessionState: SessionState
+  const hasState = await settings.has('session')
+  if (hasState) {
+    sessionState = (await settings.get('session')) as unknown as SessionState
+  } else {
+    sessionState = {
+      activeCollectionName: null,
+      activeFileFilepath: null,
+      activeRequestIdx: null
+    }
+  }
+
+  const saveState = async (s: SessionState): Promise<void> => {
+    await settings.set('session', {
+      ...s
+    })
+  }
+
+  const getState = async (): Promise<SessionState> => {
+    return sessionState
+  }
+
+  return {
+    saveState,
+    getState
+  }
+}
+
 interface LayoutStateKeeper {
   saveState: (s: LayoutData) => Promise<void>
   getLayout: () => Promise<LayoutData>

@@ -224,9 +224,9 @@
   optionalDependencies:
     global-agent "^3.0.0"
 
-"@electron/node-gyp@git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2":
+"@electron/node-gyp@https://github.com/electron/node-gyp#06b29aafb7708acef8b3669835c8a7857ebc92d2":
   version "10.2.0-electron.1"
-  resolved "git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2"
+  resolved "https://github.com/electron/node-gyp#06b29aafb7708acef8b3669835c8a7857ebc92d2"
   dependencies:
     env-paths "^2.2.0"
     exponential-backoff "^3.1.1"
@@ -817,7 +817,7 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@tailwindcss/node@^4.0.0":
+"@tailwindcss/node@4.0.9":
   version "4.0.9"
   resolved "https://registry.yarnpkg.com/@tailwindcss/node/-/node-4.0.9.tgz#27f08681b2cf6197a9c4c0ce0a0cb8dd16b3aaaf"
   integrity sha512-tOJvdI7XfJbARYhxX+0RArAhmuDcczTC46DGCEziqxzzbIaPnfYaIyRT31n4u8lROrsO7Q6u/K9bmQHL2uL1bQ==
@@ -881,7 +881,7 @@
   resolved "https://registry.yarnpkg.com/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.0.9.tgz#91f9429cd2f06090cbd91581155e2828e498c8c8"
   integrity sha512-dpc05mSlqkwVNOUjGu/ZXd5U1XNch1kHFJ4/cHkZFvaW1RzbHmRt24gvM8/HC6IirMxNarzVw4IXVtvrOoZtxA==
 
-"@tailwindcss/oxide@^4.0.0":
+"@tailwindcss/oxide@4.0.9":
   version "4.0.9"
   resolved "https://registry.yarnpkg.com/@tailwindcss/oxide/-/oxide-4.0.9.tgz#83d69528a0f8df99552a7d9df16c6a591878bbc7"
   integrity sha512-eLizHmXFqHswJONwfqi/WZjtmWZpIalpvMlNhTM99/bkHtUs6IqgI1XQ0/W5eO2HiRQcIlXUogI2ycvKhVLNcA==
@@ -898,15 +898,15 @@
     "@tailwindcss/oxide-win32-arm64-msvc" "4.0.9"
     "@tailwindcss/oxide-win32-x64-msvc" "4.0.9"
 
-"@tailwindcss/vite@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/vite/-/vite-4.0.0.tgz#40360987491d148a0dbd2d9e257dd7150b70e08c"
-  integrity sha512-4uukMiU9gHui8KMPMdWic5SP1O/tmQ1NFSRNrQWmcop5evAVl/LZ6/LuWL3quEiecp2RBcRWwqJrG+mFXlRlew==
+"@tailwindcss/vite@^4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/vite/-/vite-4.0.9.tgz#31e707ee7dabecc5a288c77c7504c8454a7add2d"
+  integrity sha512-BIKJO+hwdIsN7V6I7SziMZIVHWWMsV/uCQKYEbeiGRDRld+TkqyRRl9+dQ0MCXbhcVr+D9T/qX2E84kT7V281g==
   dependencies:
-    "@tailwindcss/node" "^4.0.0"
-    "@tailwindcss/oxide" "^4.0.0"
+    "@tailwindcss/node" "4.0.9"
+    "@tailwindcss/oxide" "4.0.9"
     lightningcss "^1.29.1"
-    tailwindcss "4.0.0"
+    tailwindcss "4.0.9"
 
 "@tootallnate/once@1":
   version "1.1.2"

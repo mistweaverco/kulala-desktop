@@ -1,6 +1,6 @@
-import { app, shell, BrowserWindow, session } from 'electron'
+import { app, BrowserWindow, session, shell } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { windowStateKeeper } from './stateKeeper'
 import { ipcMainHandlersInit } from './ipcMainHandlers'

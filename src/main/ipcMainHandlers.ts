@@ -1,9 +1,11 @@
 import { app, ipcMain } from 'electron'
-import { pickFiles, type FileInfo } from './file'
+import { type FileInfo, pickFiles } from './file'
 import { database, type DBFilesRow } from './database'
 import fs from 'fs'
-import { Document, DocumentParser } from './parser/DocumentParser'
-import { LayoutData, layoutStateKeeper } from './stateKeeper'
+import { Block, Document, DocumentParser } from './parser/DocumentParser'
+import { LayoutData, layoutStateKeeper, SessionState, sessionStateKeeper } from './stateKeeper'
+import { DocumentBuilder } from './parser/DocumentBuilder'
+import { customFetch } from './customFetch'
 
 export const ipcMainHandlersInit = (): void => {
   ipcMain.handle('pickFiles', async (_, cn: string): Promise<FileInfo[]> => {
@@ -46,7 +48,52 @@ export const ipcMainHandlersInit = (): void => {
     return await lsk.getLayout()
   })
 
+  ipcMain.handle('saveSession', async (_, s: SessionState): Promise<void> => {
+    const sk = await sessionStateKeeper()
+    await sk.saveState(s)
+  })
+
+  ipcMain.handle('getSession', async (): Promise<SessionState> => {
+    const sk = await sessionStateKeeper()
+    return await sk.getState()
+  })
+
+  ipcMain.handle('saveDocumentModel', async (_, doc: Document, fp: string): Promise<boolean> => {
+    const s = await DocumentBuilder.build(doc, true)
+    fs.writeFileSync(fp, s, 'utf-8')
+    return true
+  })
+
+  ipcMain.handle('saveFile', (_, s: string, fp: string): void => {
+    fs.writeFileSync(fp, s, 'utf-8')
+  })
+
   ipcMain.handle('getAppVersion', (): string => {
     return app.getVersion()
   })
+  ipcMain.handle(
+    'sendRequest',
+    async (_, block: Block): Promise<{ success: boolean; responseBody?: string }> => {
+      const headers: Record<string, string> =
+        block.request?.headers.reduce(
+          (acc, header) => {
+            acc[header.key] = header.value
+            return acc
+          },
+          {} as Record<string, string>
+        ) || {}
+      try {
+        const res = await customFetch(block.request?.url || '', {
+          method: block.request?.method || 'GET',
+          headers: headers,
+          body: block.request?.body || null
+        })
+        const responseBody = await res.text()
+        return { success: true, responseBody: responseBody }
+      } catch (error) {
+        console.error('Error sending request:', error)
+        return { success: false }
+      }
+    }
+  )
 }

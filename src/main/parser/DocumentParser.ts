@@ -1,4 +1,4 @@
-import Parser, { type SyntaxNode, type Language } from 'tree-sitter'
+import Parser, { type Language, type SyntaxNode } from 'tree-sitter'
 import Kulala from '@mistweaverco/tree-sitter-kulala'
 
 export interface Header {
@@ -6,9 +6,14 @@ export interface Header {
   value: string
 }
 
-export interface RequestMultipartFormData {
+export interface RequestFormData {
   key: string
   value: string
+  type?: 'text' | 'file'
+  file?: {
+    fileName: string
+    contentType: string
+  }
 }
 
 interface Request {
@@ -17,7 +22,7 @@ interface Request {
   httpVersion: string
   headers: Header[]
   body: string | null
-  multipartFormData: RequestMultipartFormData[] | null
+  multipartFormData: RequestFormData[] | null
 }
 
 interface Metadata {
@@ -80,6 +85,13 @@ const documentHasErrors = (node: SyntaxNode): boolean => {
     return false // Return false if no error is found in this subtree
   }
   return recursiveNodeWalk(node, (n) => {
+    if (n.hasError) {
+      console.error(
+        'DocumentPraser',
+        'documentHasErrors',
+        `Error in node: ${n.type} at ${n.startPosition.row}:${n.startPosition.column} - ${n.endPosition.row}:${n.endPosition.column}`
+      )
+    }
     return n.hasError // Return true if the node has an error
   })
 }
@@ -139,7 +151,7 @@ const parse = (content: string): Document | null => {
     let url: string = ''
     let httpVersion: string = ''
     let body: string | null = null
-    let multipartFormData: RequestMultipartFormData[] | null = null
+    let multipartFormData: RequestFormData[] | null = null
 
     bn.children.forEach((node) => {
       if (node.type === 'pre_request_script') {

@@ -1,5 +1,7 @@
 import * as prettier from 'prettier'
-import type { Document, Block, Header } from './DocumentParser'
+import type { Document, Block, Header, RequestFormData } from './DocumentParser'
+
+const DEFAULT_MULTIPART_BOUNDARY = '----KulalaBoundary'
 
 function headerToPascalCase(str: string): string {
   return str
@@ -8,7 +10,7 @@ function headerToPascalCase(str: string): string {
     .join('-')
 }
 
-const formatFormBody = (body: string): string => {
+const formatSimpleFormBody = (body: string): string => {
   body = body.replace(/\n/g, '').replace(/\s+/g, '')
   const parts = body.split('&')
   if (parts.length === 1) {
@@ -17,10 +19,48 @@ const formatFormBody = (body: string): string => {
   return parts.join('&\n').replace(/\n\s*\n/g, '\n')
 }
 
+const getMultipartFormBoundary = (headers: Header[]): string => {
+  const contentTypeHeader = getHeader(headers, 'content-type')
+  if (!contentTypeHeader) {
+    return DEFAULT_MULTIPART_BOUNDARY
+  }
+  const boundaryMatch = contentTypeHeader.match(/boundary=(.+)/)
+  if (!boundaryMatch) {
+    return DEFAULT_MULTIPART_BOUNDARY
+  }
+  return boundaryMatch[1]
+}
+
+const formatMultipartFormBody = (headers: Header[], requestFormData: RequestFormData[]): string => {
+  let body = ''
+  const boundary = getMultipartFormBoundary(headers)
+  const len = requestFormData.length - 1
+  requestFormData.forEach((field, idx) => {
+    if (field.type === 'file') {
+      body += `--${boundary}\n`
+      body += `Content-Disposition: form-data; name="${field.key}"; filename="${field.file?.fileName}"\n`
+      body += `Content-Type: ${field.file?.contentType}\n\n`
+      body += `${field.value}\n`
+      if (idx !== len) {
+        body += `--${boundary}\n`
+      }
+    } else {
+      body += `--${boundary}\n`
+      body += `Content-Disposition: form-data; name="${field.key}"\n\n`
+      body += `${field.value}\n`
+      if (idx !== len) {
+        body += `--${boundary}\n`
+      }
+    }
+    body += `--${boundary}--\n`
+  })
+  return body
+}
+
 // Get header value based on case insensitive key
 function getHeader(headers: Header[], key: string): string | undefined {
   const header = headers.find((header) => header.key.toLowerCase() === key.toLowerCase())
-  return header?.value.toLowerCase()
+  return header?.value
 }
 
 // Helper function to split GraphQL body and variables
@@ -129,7 +169,12 @@ const build = async (document: Document, formatBody: boolean = true): Promise<st
     }
     if (block.request) {
       const formatParser = getFormatParser(block)
+      const contentType = getHeader(block.request.headers, 'content-type')
+      const multipartFormData = block.request.multipartFormData
       output += `${block.request.method} ${block.request.url} ${block.request.httpVersion}\n`
+      if (!contentType && multipartFormData) {
+        output += `Content-Type: multipart/form-data; boundary=${DEFAULT_MULTIPART_BOUNDARY}\n`
+      }
       for (const header of block.request.headers) {
         let headerKey = header.key
         switch (block.request.httpVersion) {
@@ -146,6 +191,7 @@ const build = async (document: Document, formatBody: boolean = true): Promise<st
       }
       if (block.request.body) {
         let body = block.request.body.trim()
+        const contentType = getHeader(block.request.headers, 'content-type')
         if (formatBody) {
           if (formatParser === 'graphql') {
             try {
@@ -187,14 +233,20 @@ const build = async (document: Document, formatBody: boolean = true): Promise<st
               console.log(error.message)
               process.exit(1)
             }
-          } else if (
-            getHeader(block.request.headers, 'content-type') === 'application/x-www-form-urlencoded'
-          ) {
-            body = formatFormBody(body)
           }
+        }
+        if (contentType === 'application/x-www-form-urlencoded') {
+          body = formatSimpleFormBody(body)
         }
         output += `\n${body}\n`
       }
+    }
+    if (block.request?.multipartFormData) {
+      const body = formatMultipartFormBody(
+        block.request.headers,
+        block.request.multipartFormData || []
+      )
+      output += `\n${body}\n`
     }
     if (block.postRequestScripts.length > 0) {
       for (const script of block.postRequestScripts) {

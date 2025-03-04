@@ -2,7 +2,7 @@
 /// <reference types="vite/client" />
 import { ElectronAPI } from '@electron-toolkit/preload'
 import type { Document } from '../../main/parser/DocumentParser'
-import type { LayoutData } from '../../main/stateKeeper'
+import type { LayoutData, SessionState } from '../../main/stateKeeper'
 
 declare global {
   interface Window {
@@ -17,6 +17,9 @@ declare global {
       removeFileFromCollection: (cn: string, fp: string) => Promise<void>
       saveLayout: (layout: { leftSectionWidth: number }) => Promise<void>
       getLayout: () => Promise<LayoutData>
+      saveSession: (s: SessionState) => Promise<void>
+      getSession: () => Promise<SessionState>
+      saveDocumentModel: (doc: Document, fp: string) => Promise<boolean>
     }
   }
 }
