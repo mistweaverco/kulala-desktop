@@ -45,4 +45,4 @@ If you're interested in a Neovim-based REST client, check it out!
 
 Once released, you will be able to grab the latest version from the
 [GitHub releases page](https://github.com/mistweaverco/kulala/releases/latest)
-or from the [website](https://kulala.mwco.app/downloads).
+or from the [website](https://getkulala.net/downloads).
