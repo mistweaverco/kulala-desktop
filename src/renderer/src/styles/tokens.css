@@ -1,0 +1,62 @@
+:root {
+  color-scheme: dark;
+
+  --kulala-bg: #1a1d24;
+  --kulala-bg-elevated: #22262f;
+  --kulala-bg-muted: #2a2f3a;
+  --kulala-border: #353a46;
+  --kulala-border-subtle: #2e333d;
+
+  --kulala-fg: #e8eaed;
+  --kulala-fg-muted: #9aa0a9;
+  --kulala-fg-subtle: #6b7280;
+
+  --kulala-accent: #6366f1;
+  --kulala-accent-hover: #818cf8;
+  --kulala-accent-fg: #ffffff;
+
+  --kulala-secondary: #ec4899;
+  --kulala-secondary-hover: #f472b6;
+  --kulala-secondary-fg: #ffffff;
+  --kulala-secondary-bg: #831843;
+
+  --kulala-success: #22c55e;
+  --kulala-success-bg: #14532d;
+  --kulala-warning: #f59e0b;
+  --kulala-warning-bg: #78350f;
+  --kulala-error: #ef4444;
+  --kulala-error-bg: #7f1d1d;
+  --kulala-info: #38bdf8;
+
+  --kulala-radius-sm: 4px;
+  --kulala-radius: 6px;
+  --kulala-radius-lg: 8px;
+
+  --kulala-font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
+  --kulala-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --kulala-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--kulala-bg);
+  color: var(--kulala-fg);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}

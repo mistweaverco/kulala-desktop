@@ -1,9 +1,10 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: 'bug: '
 labels: bug
-assignees: ''
+assignees:
+  - @gorillamoe
 ---
 
 **Describe the bug**

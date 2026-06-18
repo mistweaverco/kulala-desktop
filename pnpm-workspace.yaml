@@ -1,0 +1,9 @@
+allowBuilds:
+  electron-winstaller: true
+  esbuild: true
+  sqlite3: true
+  tree-sitter: set this to true or false
+minimumReleaseAgeExclude:
+  - "@sveltejs/adapter-node@5.5.5"
+  - vite@8.1.4
+  - "@mistweaverco/kulala-fmt@4.5.0"

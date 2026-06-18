@@ -1,0 +1,36 @@
+# Maintainer: mistweaverco <oss@mistweaverco.com>
+pkgname=kulala-desktop-bin
+pkgver=PLACEHOLDER_VERSION
+pkgrel=1
+pkgdesc="A fully-featured HTTP/GraphQL/gRPC/Websocket-client interface for Linux, Mac and Window."
+arch=('x86_64')
+url="https://github.com/mistweaverco/kulala-desktop"
+license=('MIT')
+provides=('kulala-desktop')
+conflicts=('kulala-desktop')
+options=('!strip')
+_deb="kulala-desktop.deb"
+source=("$_deb")
+noextract=("$_deb")
+sha256sums=(
+  'PLACEHOLDER_CHECKSUM'
+)
+
+package() {
+  local extract_dir="$srcdir/deb-extracted"
+
+  rm -rf "$extract_dir"
+  mkdir -p "$extract_dir"
+
+  cd "$extract_dir"
+  ar x "$srcdir/$_deb"
+
+  local data_archives=(data.tar.*)
+
+  if [[ ! -f "${data_archives[0]}" ]]; then
+    printf 'Could not find data.tar.* inside %s\n' "$_deb" >&2
+    return 1
+  fi
+
+  bsdtar -xpf "${data_archives[0]}" -C "$pkgdir"
+}

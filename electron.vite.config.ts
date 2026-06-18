@@ -1,37 +1,42 @@
-import tailwindcss from '@tailwindcss/vite'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "electron-vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { fileURLToPath } from "node:url";
+
+const r = (p: string): string => fileURLToPath(new URL(p, import.meta.url));
 
 export default defineConfig({
   main: {
     build: {
+      externalizeDeps: true,
       rollupOptions: {
+        external: ["electron", "sqlite3", "node-gyp-build"],
         input: {
-          index: 'src/main/index.ts'
-        }
-      }
+          index: r("./src/main/index.ts"),
+        },
+      },
     },
-    plugins: [externalizeDepsPlugin()]
   },
   preload: {
     build: {
+      externalizeDeps: true,
       rollupOptions: {
+        external: ["electron"],
         input: {
-          index: 'src/preload/index.ts'
-        }
-      }
+          index: r("./src/preload/index.ts"),
+        },
+      },
     },
-    plugins: [externalizeDepsPlugin()]
   },
   renderer: {
     build: {
       rollupOptions: {
         input: {
-          index: 'src/renderer/index.html',
-          splash: 'src/renderer/splash.html'
-        }
-      }
+          index: r("./src/renderer/index.html"),
+          splash: r("./src/renderer/splash.html"),
+        },
+      },
     },
-    plugins: [tailwindcss(), svelte()]
-  }
-})
+    plugins: [tailwindcss(), svelte()],
+  },
+});

@@ -1,17 +1,12 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
-
-type IceServer = {
-  urls: string
-  username?: string
-  credential?: string
-}
+import { ElectronAPI } from "@electron-toolkit/preload";
 
 declare global {
   interface Window {
-    electron: ElectronAPI
+    electron: ElectronAPI;
     KulalaApi: {
-      getAppVersion: () => Promise<string>
-      pickFiles: () => Promise<FileInfo[]>
-    }
+      getAppVersion: () => Promise<string>;
+      pickFolders: (collectionName: string) => Promise<void>;
+      createCollection: (name: string) => Promise<{ ok: boolean; err?: string }>;
+    };
   }
 }

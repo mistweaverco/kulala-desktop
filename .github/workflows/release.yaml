@@ -4,59 +4,18 @@ name: Release
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
 jobs:
-  build-linux-arm64:
-    name: Build Linux ARM64
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set up env
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "PLATFORM=linux-arm64" >> $GITHUB_ENV
-      - name: Install OS packages
-        run: |
-          sudo apt-get install -y flatpak flatpak-builder && \
-          sudo snap install snapcraft --classic && \
-          flatpak remote-add \
-          --user \
-          --if-not-exists \
-          flathub https://flathub.org/repo/flathub.flatpakrepo
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Cache Bun
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: linux-arm64-bun-${{ hashFiles('**/bun.lockb') }}
-          restore-keys: |
-            linux-arm64-bun-${{ hashFiles('**/bun.lockb') }}
-      - name: Cache Electron
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/electron/
-          key: linux-arm64-electron-${{ hashFiles('~/.cache/electron/**') }}
-          restore-keys: |
-            linux-arm64-electron-${{ hashFiles('~/.cache/electron/**') }}
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Build Linux ARM64
-        run: ./scripts/build.sh
-      - name: Linux Release
-        run: ./scripts/release.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Set up env
@@ -64,44 +23,105 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "PLATFORM=linux" >> $GITHUB_ENV
-      - name: Install OS packages
-        run: |
-          sudo apt-get install -y flatpak flatpak-builder && \
-          sudo snap install snapcraft --classic && \
-          flatpak remote-add \
-            --user \
-            --if-not-exists \
-            flathub https://flathub.org/repo/flathub.flatpakrepo
+          echo "TARGET_PLATFORM=linux" >> $GITHUB_ENV
+      - name: Install build dependencies
+        run: ./scripts/ci-install-build-deps.sh linux
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.12
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
       - name: Cache Bun
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
-          key: linux-bun-${{ hashFiles('**/bun.lockb') }}
+          key: linux-bun-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            linux-bun-${{ hashFiles('**/bun.lockb') }}
+            linux-bun-
       - name: Cache Electron
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
-          path: ~/.cache/electron/
-          key: linux-electron-${{ hashFiles('~/.cache/electron/**') }}
+          path: ~/.cache/electron
+          key: linux-electron-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            linux-electron-${{ hashFiles('~/.cache/electron/**') }}
+            linux-electron-
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Build Linux
         run: ./scripts/build.sh
-      - name: Linux Release
-        run: ./scripts/release.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-amd64
+          path: |
+            dist/kulala-desktop_amd64.deb
+            dist/kulala-desktop_x86_64.AppImage
+          if-no-files-found: error
+
+  build-linux-arm64:
+    name: Build Linux ARM64
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Set up env
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "PLATFORM=linux-arm64" >> $GITHUB_ENV
+          echo "TARGET_PLATFORM=linux-arm64" >> $GITHUB_ENV
+      - name: Install build dependencies
+        run: ./scripts/ci-install-build-deps.sh linux-arm64
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.12
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Cache Bun
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: linux-arm64-bun-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            linux-arm64-bun-
+      - name: Cache Electron
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/electron
+          key: linux-arm64-electron-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            linux-arm64-electron-
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build Linux ARM64
+        run: ./scripts/build.sh
+      - name: Upload Linux ARM64 artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-arm64
+          path: |
+            dist/kulala-desktop_arm64.deb
+            dist/kulala-desktop_arm64.AppImage
+          if-no-files-found: error
+
   build-windows:
     name: Build Windows
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Set up env
@@ -110,63 +130,85 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "PLATFORM=windows" >> $GITHUB_ENV
+          echo "TARGET_PLATFORM=windows" >> $GITHUB_ENV
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.12
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
       - name: Cache Bun
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
-          key: windows-bun-${{ hashFiles('**/bun.lockb') }}
+          key: windows-bun-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            windows-bun-${{ hashFiles('**/bun.lockb') }}
+            windows-bun-
       - name: Cache Electron
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
-          path: ~/AppData/Local/electron/Cache/
-          key: windows-electron-${{ hashFiles('~/AppData/Local/electron/Cache/**') }}
+          path: ~/AppData/Local/electron/Cache
+          key: windows-electron-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            windows-electron-${{ hashFiles('~/AppData/Local/electron/Cache/**') }}
+            windows-electron-
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Build Windows
         shell: bash
         run: ./scripts/build.sh
-      - name: Windows Release
-        shell: bash
-        run: ./scripts/release.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-amd64
+          path: dist/kulala-desktop-setup_x64.exe
+          if-no-files-found: error
+
   build-macos:
     name: Build MacOS
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Install bash
-        run: brew install bash
       - name: Set up env
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "PLATFORM=macos" >> $GITHUB_ENV
+          echo "TARGET_PLATFORM=macos" >> $GITHUB_ENV
+      - name: Install build dependencies
+        run: ./scripts/ci-install-build-deps.sh macos
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.12
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
       - name: Cache Bun
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
-          key: macos-bun-${{ hashFiles('**/bun.lockb') }}
+          key: macos-bun-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            macos-bun-${{ hashFiles('**/bun.lockb') }}
+            macos-bun-
       - name: Cache Electron
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
-          path: ~/Library/Caches/electron/
-          key: macos-electron-${{ hashFiles('~/Library/Caches/electron/**') }}
+          path: ~/Library/Caches/electron
+          key: macos-electron-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            macos-electron-${{ hashFiles('~/Library/Caches/electron/**') }}
+            macos-electron-
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Build MacOS
@@ -176,9 +218,64 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPLE_NOTARIZATION_WEBHOOK_URL: ${{ secrets.APPLE_NOTARIZATION_WEBHOOK_URL }}
         run: ./scripts/build.sh
-      - name: MacOS Release
-        run: ./scripts/release.sh
+      - name: Upload MacOS artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: macos-universal
+          path: dist/kulala-desktop_universal.dmg
+          if-no-files-found: error
+
+  release:
+    name: Release
+    needs:
+      - build-linux
+      - build-linux-arm64
+      - build-windows
+      - build-macos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up env
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: .
+          pattern: "*"
+          merge-multiple: true
+      - name: Create GitHub release
+        run: PLATFORM=all ./scripts/release.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-aur:
+    name: Deploy to AUR
+    needs: release
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: pacman -Syu --noconfirm pacman-contrib git openssh
+      - uses: actions/checkout@v7
+      - name: Set up env
+        run: echo "CLEAN_VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+      - name: Update Version in PKGBUILD
+        run: |
+          VERSION=${{ github.ref_name }}
+          VERSION_NO_V=${VERSION#v}
+          sed -i "s/pkgver=.*/pkgver=$VERSION_NO_V/" ./scripts/PKGBUILD
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.3
+        with:
+          pkgname: kulala-desktop-bin
+          pkgbuild: ./scripts/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update to v${{ env.CLEAN_VERSION }}"
+          updpkgsums: true

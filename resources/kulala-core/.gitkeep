@@ -1,0 +1,4 @@
+# Place platform kulala-core binaries here before packaging:
+# resources/kulala-core/kulala-core-linux-x86_64
+# resources/kulala-core/kulala-core.exe (Windows)
+# At runtime, bundled binaries are preferred over auto-download when present.

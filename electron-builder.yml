@@ -1,20 +1,29 @@
 ---
-appId: app.mwco.kulala.desktop
-productName: Kulala
+appId: app.kulala.desktop
+productName: Kulala Desktop
 directories:
   buildResources: build
 files:
-  - '!**/.vscode/*'
-  - '!src/*'
-  - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
-  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
-  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - "!**/.vscode/*"
+  - "!src/*"
+  - "!electron.vite.config.{js,ts,mjs,cjs}"
+  - "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
+  - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
+  - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
+  - "!dist/**"
+  - "!tmp/**"
+  - "!scripts/**"
+  - "!resources/kulala-core/**"
 asarUnpack:
   - resources/**
+extraResources:
+  - from: resources/kulala-core
+    to: kulala-core
+    filter:
+      - "**/*"
 afterSign: scripts/notarize.js
 win:
-  executableName: Kulala
+  executableName: kulala-desktop
   icon: build/icon.ico
 nsis:
   artifactName: ${name}-setup_${arch}.${ext}
@@ -43,21 +52,16 @@ dmg:
 linux:
   target:
     - AppImage
-    - snap
-    - flatpak
     - deb
   maintainer: kulala.mwco.app
   category: Utility
   icon: build/
 appImage:
   artifactName: ${name}_${arch}.${ext}
-snap:
-  artifactName: ${name}_${arch}.${ext}
-flatpak:
-  artifactName: ${name}_${arch}.${ext}
 deb:
   artifactName: ${name}_${arch}.${ext}
+  compression: gz
 npmRebuild: false
 publish:
   provider: generic
-  url: https://auto-updates.kulala.mwco.app/
+  url: https://auto-updates.kulala.app/

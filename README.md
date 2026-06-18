@@ -13,7 +13,10 @@
 
 <p></p>
 
-A minimal REST-Client GUI for Mac, Linux and Windows.
+A fully-featured ⚡️ HTTP/GraphQL/gRPC/Websocket-client
+🐼 interface 🖥️ for Linux, Mac and Window ❤️.
+
+We support the Jetbrains .http spec (with full scripting support).
 
 Kulala is swahili for "rest" or "relax".
 
@@ -46,3 +49,9 @@ If you're interested in a Neovim-based REST client, check it out!
 Once released, you will be able to grab the latest version from the
 [GitHub releases page](https://github.com/mistweaverco/kulala/releases/latest)
 or from the [website](https://getkulala.net/downloads).
+
+## Development
+
+### Prequisites
+
+-  `sudo pacman -S --needed libxcrypt libxcrypt-compat`
