@@ -9,3 +9,5 @@ out
 .env
 http-client.env.json
 http-client.private.env.json
+resources/kulala-core/kulala-core*
+!resources/kulala-core/.gitkeep

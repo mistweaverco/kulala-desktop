@@ -3,22 +3,19 @@
 if [ -z "$VERSION" ]; then echo "Error: VERSION is not set"; exit 1; fi
 if [ -z "$PLATFORM" ]; then echo "Error: PLATFORM is not set"; exit 1; fi
 
-BIN_NAME="kulala"
+BIN_NAME="kulala-desktop"
 RELEASE_ACTION="create"
 GH_TAG="v$VERSION"
 FILES=()
 
 LINUX_FILES=(
   "dist/${BIN_NAME}_amd64.deb"
-  "dist/${BIN_NAME}_amd64.snap"
   "dist/${BIN_NAME}_x86_64.AppImage"
-  "dist/${BIN_NAME}_x86_64.flatpak"
 )
 
 LINUX_ARM64_FILES=(
   "dist/${BIN_NAME}_arm64.deb"
   "dist/${BIN_NAME}_arm64.AppImage"
-  "dist/${BIN_NAME}_aarch64.flatpak"
 )
 
 WINDOWS_FILES=(
@@ -27,6 +24,13 @@ WINDOWS_FILES=(
 
 MACOS_FILES=(
   "dist/${BIN_NAME}_universal.dmg"
+)
+
+ALL_FILES=(
+  "${LINUX_FILES[@]}"
+  "${LINUX_ARM64_FILES[@]}"
+  "${WINDOWS_FILES[@]}"
+  "${MACOS_FILES[@]}"
 )
 
 set_release_action() {
@@ -59,6 +63,9 @@ check_files_exist() {
 
 set_files_based_on_platform() {
   case $PLATFORM in
+    all)
+      FILES=("${ALL_FILES[@]}")
+      ;;
     linux)
       FILES=("${LINUX_FILES[@]}")
       ;;

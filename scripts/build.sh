@@ -1,7 +1,20 @@
 #!/usr/bin/env bash
 
-if [ -z "$VERSION" ]; then echo "Error: VERSION is not set"; exit 1; fi
-if [ -z "$PLATFORM" ]; then echo "Error: PLATFORM is not set"; exit 1; fi
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TARGET_PLATFORM="${TARGET_PLATFORM:-${PLATFORM:-}}"
+VERSION="${VERSION:-$(jq -r '.version' "$ROOT_DIR/package.json")}"
+
+if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+  echo "Error: VERSION is not set"
+  exit 1
+fi
+if [ -z "$TARGET_PLATFORM" ]; then
+  echo "Error: TARGET_PLATFORM is not set"
+  exit 1
+fi
+
+export VERSION
+export TARGET_PLATFORM
 
 update_package_json_version() {
   local tmp
@@ -9,14 +22,27 @@ update_package_json_version() {
   jq --arg v "$VERSION" '.version = $v' package.json > "$tmp" && mv "$tmp" package.json
 }
 
+fetch_kulala_core() {
+  "$ROOT_DIR/scripts/fetch-kulala-core.sh"
+}
+
+prepare_build_output() {
+  rm -rf "$ROOT_DIR/dist/linux-unpacked" "$ROOT_DIR/dist/"*.deb "$ROOT_DIR/dist/"*.AppImage
+}
+
 update_package_json_version
 
 build_windows() {
+  prepare_build_output
+  fetch_kulala_core
   bun run build && ./node_modules/.bin/electron-builder --win --publish never
 }
 
 build_linux() {
-  bun run build && ./node_modules/.bin/electron-builder --linux --publish never
+  prepare_build_output
+  fetch_kulala_core
+  bun run build && ./node_modules/.bin/electron-builder --linux deb --publish never && \
+    bun run build && ./node_modules/.bin/electron-builder --linux appimage --publish never
 }
 
 build_linux_arm64() {
@@ -25,28 +51,33 @@ build_linux_arm64() {
   # it doesn't work as expected.
   # There is an issue when building snap packages.
   # Instead, we build each target individually.
+  prepare_build_output
+  fetch_kulala_core
   bun run build && ./node_modules/.bin/electron-builder --linux deb --publish never --arm64 && \
-    bun run build && ./node_modules/.bin/electron-builder --linux flatpak --publish never --arm64 && \
     bun run build && ./node_modules/.bin/electron-builder --linux appimage --publish never --arm64
 }
 
-build_linux_debug() {
+build_arch_local() {
+  prepare_build_output
+  fetch_kulala_core
   bun run build && ./node_modules/.bin/electron-builder --linux deb --publish never
 }
 
 build_macos() {
+  prepare_build_output
+  fetch_kulala_core
   bun run build && ./node_modules/.bin/electron-builder --mac --publish never
 }
 
-case $PLATFORM in
+case $TARGET_PLATFORM in
   "linux")
     build_linux
     ;;
   "linux-arm64")
     build_linux_arm64
     ;;
-  "linux-debug")
-    build_linux_debug
+  "arch-local")
+    build_arch_local
     ;;
   "macos")
     build_macos
@@ -55,7 +86,7 @@ case $PLATFORM in
     build_windows
     ;;
   *)
-    echo "Error: PLATFORM $PLATFORM is not supported"
+    echo "Error: PLATFORM $TARGET_PLATFORM is not supported"
     exit 1
     ;;
 esac

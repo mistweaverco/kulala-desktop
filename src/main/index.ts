@@ -1,12 +1,12 @@
-import { app, shell, BrowserWindow, session } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
-import { windowStateKeeper } from './stateKeeper'
-import { ipcMainHandlersInit } from './ipcMainHandlers'
+import { app, shell, BrowserWindow, session } from "electron";
+import { join } from "path";
+import { electronApp, optimizer, is } from "@electron-toolkit/utils";
+import icon from "../../resources/icon.png?asset";
+import { windowStateKeeper } from "./stateKeeper";
+import { ipcMainHandlersInit, setMainWindow } from "./ipcMainHandlers";
 
-let MAIN_WINDOW: BrowserWindow
-let SPLASH_WINDOW: BrowserWindow
+let MAIN_WINDOW: BrowserWindow;
+let SPLASH_WINDOW: BrowserWindow;
 
 async function createSplashWindow(): Promise<void> {
   SPLASH_WINDOW = new BrowserWindow({
@@ -22,24 +22,24 @@ async function createSplashWindow(): Promise<void> {
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: true,
-      webSecurity: true
-    }
-  })
+      webSecurity: true,
+    },
+  });
 
-  SPLASH_WINDOW.loadFile(join(__dirname, '../splash/index.html'))
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    SPLASH_WINDOW.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/splash.html')
+  SPLASH_WINDOW.loadFile(join(__dirname, "../splash/index.html"));
+  if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
+    SPLASH_WINDOW.loadURL(process.env["ELECTRON_RENDERER_URL"] + "/splash.html");
   } else {
-    SPLASH_WINDOW.loadFile(join(__dirname, '../renderer/splash.html'))
+    SPLASH_WINDOW.loadFile(join(__dirname, "../renderer/splash.html"));
   }
 
-  SPLASH_WINDOW.once('ready-to-show', () => {
-    SPLASH_WINDOW.show()
-  })
+  SPLASH_WINDOW.once("ready-to-show", () => {
+    SPLASH_WINDOW.show();
+  });
 }
 
 async function createMainWindow(): Promise<void> {
-  const mainWindowState = await windowStateKeeper('main')
+  const mainWindowState = await windowStateKeeper("main");
 
   MAIN_WINDOW = new BrowserWindow({
     width: mainWindowState.width,
@@ -50,64 +50,65 @@ async function createMainWindow(): Promise<void> {
     y: mainWindowState.y,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    ...(process.platform === "linux" ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: join(__dirname, "../preload/index.mjs"),
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: true,
-      webSecurity: true
-    }
-  })
+      webSecurity: true,
+    },
+  });
 
-  mainWindowState.track(MAIN_WINDOW)
+  mainWindowState.track(MAIN_WINDOW);
+  setMainWindow(MAIN_WINDOW);
 
-  MAIN_WINDOW.on('ready-to-show', () => {
-    MAIN_WINDOW.hide()
+  MAIN_WINDOW.on("ready-to-show", () => {
+    MAIN_WINDOW.hide();
     setTimeout(() => {
-      SPLASH_WINDOW.destroy()
-    }, 500)
+      SPLASH_WINDOW.destroy();
+    }, 500);
     setTimeout(() => {
-      MAIN_WINDOW.show()
-    }, 1000)
-  })
+      MAIN_WINDOW.show();
+    }, 1000);
+  });
 
   MAIN_WINDOW.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
+    shell.openExternal(details.url);
+    return { action: "deny" };
+  });
 
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    MAIN_WINDOW.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
+    MAIN_WINDOW.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
-    MAIN_WINDOW.loadFile(join(__dirname, '../renderer/index.html'))
+    MAIN_WINDOW.loadFile(join(__dirname, "../renderer/index.html"));
   }
 
   if (mainWindowState.isMaximized) {
-    MAIN_WINDOW.maximize()
+    MAIN_WINDOW.maximize();
   }
 }
 
 app.whenReady().then(async () => {
-  electronApp.setAppUserModelId('app.mwco.kulala.desktop')
+  electronApp.setAppUserModelId("app.mwco.kulala.desktop");
 
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
-    details.requestHeaders['User-Agent'] = 'Kulala/' + app.getVersion()
-    callback({ cancel: false, requestHeaders: details.requestHeaders })
-  })
+    details.requestHeaders["User-Agent"] = "Kulala/" + app.getVersion();
+    callback({ cancel: false, requestHeaders: details.requestHeaders });
+  });
 
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
+  app.on("browser-window-created", (_, window) => {
+    optimizer.watchWindowShortcuts(window);
+  });
 
-  ipcMainHandlersInit()
+  ipcMainHandlersInit();
 
-  await createSplashWindow()
-  await createMainWindow()
-})
+  await createSplashWindow();
+  await createMainWindow();
+});
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
   }
-})
+});

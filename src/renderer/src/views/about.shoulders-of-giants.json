@@ -42,11 +42,11 @@
     "url": "https://github.com/tailwindlabs/tailwindcss"
   },
   {
-    "title": "DaisyUI",
-    "description": "A component library for Tailwind CSS.",
+    "title": "MeltUI",
+    "description": "The next generation of Melt UI.",
     "usage": "Used for styling the user interface.",
     "license": "MIT",
-    "url": "https://daisyui.com/"
+    "url": "https://next.melt-ui.com/"
   },
   {
     "title": "eslint",
@@ -56,18 +56,25 @@
     "url": "https://github.com/eslint/eslint"
   },
   {
+    "title": "cURL",
+    "description": "command line tool and library for transferring data with URLs.",
+    "usage": "Kulala-Core uses the cURL to send HTTP requests.",
+    "license": "permissive MIT-Style",
+    "url": "https://curl.se/"
+  },
+  {
+    "title": "jq",
+    "description": "jq is like sed for JSON data - you can use it to slice and filter and map and transform structured data with the same ease that sed, awk, grep and friends let you play with text.",
+    "usage": "Kulala-Core uses jq to filter response bodies.",
+    "license": "MIT",
+    "url": "https://jqlang.org/"
+  },
+  {
     "title": "prettier",
     "description": "An opinionated code formatter.",
     "usage": "Used for formatting the application.",
     "license": "MIT",
     "url": "https://github.com/prettier/prettier"
-  },
-  {
-    "title": "Vscode",
-    "description": "Visual Studio Code is a code editor redefined and optimized for building and debugging modern web and cloud applications.",
-    "usage": "Used for writing the application.",
-    "license": "MIT",
-    "url": "https://github.com/microsoft/vscode"
   },
   {
     "title": "Neovim",

@@ -1,44 +1,82 @@
 <script lang="ts">
   import { useActiveView } from './stores'
+  import Button from './components/ui/Button.svelte'
+  import Menu from './components/ui/Menu.svelte'
+  import Input from './components/ui/Input.svelte'
+  import Logo from './components/ui/Logo.svelte'
+
   const activeView = useActiveView()
 
-  const handleTopButtonsClick = (evt: MouseEvent): void => {
-    evt.preventDefault()
-    const target = evt.target as HTMLButtonElement
-    const root = target.closest('button')
-
-    $activeView = root.dataset.action
+  function navigate(action: string): void {
+    $activeView = action
   }
 </script>
 
-<div class="navbar bg-base-100 shadow-sm">
-  <div class="flex-1">
-    <button
-      class="btn text-xl {$activeView === 'explorer' ? 'btn-primary' : 'btn-ghost'}"
-      data-action="explorer"
-      on:click={handleTopButtonsClick}
+<nav class="navbar">
+  <div class="navbar-start">
+    <Button
+      variant="ghost"
+      onclick={() => navigate('explorer')}
     >
-      <span class="icon">
-        <i class="fa-solid fa-compass"></i>
-      </span>
-      Explorer
-    </button>
+    <Logo />
+    </Button>
   </div>
-  <div class="flex gap-2">
-    <input type="text" placeholder="Search" class="input input-bordered w-24 md:w-auto" />
-    <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-        <div class="w-10 rounded-full">
-          <i class="fa-solid fa-user pt-3"></i>
+  <div class="navbar-end">
+    <Input class="search-input" placeholder="Search" />
+    <Menu>
+      {#snippet children()}
+        <div class="avatar">
+          <i class="fa-solid fa-user"></i>
         </div>
-      </div>
-      <ul
-        tabindex="-1"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-      >
-        <li><button>Settings</button></li>
-        <li><button data-action="about" on:click={handleTopButtonsClick}>About</button></li>
-      </ul>
-    </div>
+      {/snippet}
+      {#snippet content()}
+        <button type="button" class="kulala-menu-item" onclick={() => navigate('settings')}>
+          Settings
+        </button>
+        <button type="button" class="kulala-menu-item" onclick={() => navigate('about')}>
+          About
+        </button>
+      {/snippet}
+    </Menu>
   </div>
-</div>
+</nav>
+
+<style>
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background: var(--kulala-bg-elevated);
+    border-bottom: 1px solid var(--kulala-border-subtle);
+    height: 3.5rem;
+  }
+
+  .navbar-start,
+  .navbar-end {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  :global(.search-input) {
+    width: 8rem;
+  }
+
+  @media (min-width: 768px) {
+    :global(.search-input) {
+      width: 12rem;
+    }
+  }
+
+  .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--kulala-bg-muted);
+    color: var(--kulala-fg-muted);
+  }
+</style>
