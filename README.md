@@ -33,6 +33,7 @@ No login 🌈, no tracking 🕵️‍♀️, No Ads 🔥, no BS 💩.
 [Kulala.nvim][kulala.nvim] •
 [Kulala for Visual Studio Code][kulala.vscode] •
 [Kulala Core][kulala-core]
+•
 [Kulala Github Action][kulala-github-action]
 
 ---
