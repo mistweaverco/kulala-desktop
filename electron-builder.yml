@@ -14,8 +14,10 @@ files:
   - "!tmp/**"
   - "!scripts/**"
   - "!resources/kulala-core/**"
+  - "!**/node_modules/sqlite3/build-tmp-*/**"
 asarUnpack:
   - resources/**
+  - node_modules/sqlite3/**
 extraResources:
   - from: resources/kulala-core
     to: kulala-core
@@ -42,6 +44,8 @@ mac:
   hardenedRuntime: true
   notarize: false
   icon: build/icon.icns
+  mergeASARs: true
+  singleArchFiles: "**/*.node"
   target:
     - target: dmg
       arch:
@@ -61,7 +65,7 @@ appImage:
 deb:
   artifactName: ${name}_${arch}.${ext}
   compression: gz
-npmRebuild: false
+npmRebuild: true
 publish:
   provider: generic
   url: https://auto-updates.kulala.app/

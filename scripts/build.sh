@@ -66,7 +66,9 @@ build_arch_local() {
 build_macos() {
   prepare_build_output
   fetch_kulala_core
-  pnpm run build && pnpm exec electron-builder --mac --publish never
+  pnpm run build
+  pnpm exec electron-builder install-app-deps
+  pnpm exec electron-builder --mac --publish never
 }
 
 case $TARGET_PLATFORM in
