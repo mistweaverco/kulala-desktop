@@ -38,7 +38,7 @@ No login 🌈, no tracking 🕵️‍♀️, No Ads 🔥, no BS 💩.
 
 ---
 
-![Screenshot from 2025-03-02 02-24-57](https://github.com/user-attachments/assets/1cfab904-54a7-4d4e-b4fd-817847e9f1b2)
+<img width="1280" height="640" alt="1000016278" src="https://github.com/user-attachments/assets/8948e737-6d6c-4d7b-9726-2feef74c5a29" />
 
 </div>
 
