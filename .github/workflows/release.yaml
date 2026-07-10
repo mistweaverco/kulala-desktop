@@ -197,9 +197,12 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build MacOS
         env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_NOTARIZATION_WEBHOOK_URL: ${{ secrets.APPLE_NOTARIZATION_WEBHOOK_URL }}
         run: ./scripts/build.sh
       - name: Upload MacOS artifacts
         uses: actions/upload-artifact@v7
