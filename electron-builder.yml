@@ -22,7 +22,8 @@ extraResources:
   - from: resources/kulala-core
     to: kulala-core
     filter:
-      - "**/*"
+      - kulala-core
+      - kulala-core.exe
 afterSign: scripts/notarize.js
 win:
   executableName: kulala-desktop
@@ -45,7 +46,9 @@ mac:
   notarize: false
   icon: build/icon.icns
   mergeASARs: true
-  singleArchFiles: "**/*.node"
+  singleArchFiles: |
+    **/*.node
+  x64ArchFiles: "**/kulala-core/kulala-core"
   target:
     - target: dmg
       arch:

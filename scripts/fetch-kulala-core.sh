@@ -141,6 +141,21 @@ stage_macos_binary() {
   fi
 }
 
+stage_macos_universal_binary() {
+  stage_macos_binary "kulala-core-darwin-arm64" 60000000
+  stage_macos_binary "kulala-core-darwin-x86_64" 65000000
+
+  local arm64="$DEST_DIR/kulala-core-darwin-arm64"
+  local x64="$DEST_DIR/kulala-core-darwin-x86_64"
+  local universal="$DEST_DIR/kulala-core"
+
+  rm -f "$universal"
+  lipo -create "$arm64" "$x64" -output "$universal"
+  chmod +x "$universal"
+
+  rm -f "$arm64" "$x64"
+}
+
 case "$TARGET_PLATFORM" in
   linux|arch-local)
     stage_linux_binary "kulala-core-linux-x86_64" 106000000
@@ -152,8 +167,7 @@ case "$TARGET_PLATFORM" in
     stage_windows_binary
     ;;
   macos)
-    stage_macos_binary "kulala-core-darwin-arm64" 60000000
-    stage_macos_binary "kulala-core-darwin-x86_64" 65000000
+    stage_macos_universal_binary
     ;;
   *)
     echo "Error: unsupported TARGET_PLATFORM for kulala-core fetch: $TARGET_PLATFORM" >&2
