@@ -56,7 +56,7 @@ check_files_exist() {
       printf " - %s\n" "$file"
     done
     echo "This is the content of the dist directory:"
-    ls -l dist/
+    ls -l dist/ 2>/dev/null || ls -lR .
     exit 1
   fi
 }

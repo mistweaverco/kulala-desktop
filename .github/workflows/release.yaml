@@ -229,7 +229,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
-          path: .
+          path: dist
           pattern: "*"
           merge-multiple: true
       - name: Create GitHub release
