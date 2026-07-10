@@ -35,14 +35,14 @@ update_package_json_version
 build_windows() {
   prepare_build_output
   fetch_kulala_core
-  bun run build && ./node_modules/.bin/electron-builder --win --publish never
+  pnpm run build && pnpm exec electron-builder --win --publish never
 }
 
 build_linux() {
   prepare_build_output
   fetch_kulala_core
-  bun run build && ./node_modules/.bin/electron-builder --linux deb --publish never && \
-    bun run build && ./node_modules/.bin/electron-builder --linux appimage --publish never
+  pnpm run build && pnpm exec electron-builder --linux deb --publish never && \
+    pnpm run build && pnpm exec electron-builder --linux appimage --publish never
 }
 
 build_linux_arm64() {
@@ -53,20 +53,20 @@ build_linux_arm64() {
   # Instead, we build each target individually.
   prepare_build_output
   fetch_kulala_core
-  bun run build && ./node_modules/.bin/electron-builder --linux deb --publish never --arm64 && \
-    bun run build && ./node_modules/.bin/electron-builder --linux appimage --publish never --arm64
+  pnpm run build && pnpm exec electron-builder --linux deb --publish never --arm64 && \
+    pnpm run build && pnpm exec electron-builder --linux appimage --publish never --arm64
 }
 
 build_arch_local() {
   prepare_build_output
   fetch_kulala_core
-  bun run build && ./node_modules/.bin/electron-builder --linux deb --publish never
+  pnpm run build && pnpm exec electron-builder --linux deb --publish never
 }
 
 build_macos() {
   prepare_build_output
   fetch_kulala_core
-  bun run build && ./node_modules/.bin/electron-builder --mac --publish never
+  pnpm run build && pnpm exec electron-builder --mac --publish never
 }
 
 case $TARGET_PLATFORM in

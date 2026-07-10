@@ -26,23 +26,19 @@ jobs:
           echo "TARGET_PLATFORM=linux" >> $GITHUB_ENV
       - name: Install build dependencies
         run: ./scripts/ci-install-build-deps.sh linux
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.10.0
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: pnpm
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: 3.12
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Cache Bun
-        uses: actions/cache@v6
-        with:
-          path: ~/.bun/install/cache
-          key: linux-bun-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            linux-bun-
       - name: Cache Electron
         uses: actions/cache@v6
         with:
@@ -51,7 +47,7 @@ jobs:
           restore-keys: |
             linux-electron-
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Build Linux
         run: ./scripts/build.sh
       - name: Upload Linux artifacts
@@ -79,23 +75,19 @@ jobs:
           echo "TARGET_PLATFORM=linux-arm64" >> $GITHUB_ENV
       - name: Install build dependencies
         run: ./scripts/ci-install-build-deps.sh linux-arm64
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.10.0
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: pnpm
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: 3.12
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Cache Bun
-        uses: actions/cache@v6
-        with:
-          path: ~/.bun/install/cache
-          key: linux-arm64-bun-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            linux-arm64-bun-
       - name: Cache Electron
         uses: actions/cache@v6
         with:
@@ -104,7 +96,7 @@ jobs:
           restore-keys: |
             linux-arm64-electron-
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Build Linux ARM64
         run: ./scripts/build.sh
       - name: Upload Linux ARM64 artifacts
@@ -133,23 +125,19 @@ jobs:
           echo "TARGET_PLATFORM=windows" >> $GITHUB_ENV
       - name: Set up MSVC
         uses: ilammy/msvc-dev-cmd@v1.13.0
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.10.0
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: pnpm
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: 3.12
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Cache Bun
-        uses: actions/cache@v6
-        with:
-          path: ~/.bun/install/cache
-          key: windows-bun-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            windows-bun-
       - name: Cache Electron
         uses: actions/cache@v6
         with:
@@ -158,7 +146,7 @@ jobs:
           restore-keys: |
             windows-electron-
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Build Windows
         shell: bash
         run: ./scripts/build.sh
@@ -185,23 +173,19 @@ jobs:
           echo "TARGET_PLATFORM=macos" >> $GITHUB_ENV
       - name: Install build dependencies
         run: ./scripts/ci-install-build-deps.sh macos
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.10.0
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: pnpm
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: 3.12
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Cache Bun
-        uses: actions/cache@v6
-        with:
-          path: ~/.bun/install/cache
-          key: macos-bun-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            macos-bun-
       - name: Cache Electron
         uses: actions/cache@v6
         with:
@@ -210,7 +194,7 @@ jobs:
           restore-keys: |
             macos-electron-
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Build MacOS
         env:
           CSC_LINK: ${{ secrets.CSC_LINK }}
