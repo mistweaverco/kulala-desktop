@@ -44,9 +44,8 @@ No login 🌈, no tracking 🕵️‍♀️, No Ads 🔥, no BS 💩.
 
 ## Install
 
-Once released, you will be able to grab the latest version from the
-[GitHub releases page](https://github.com/mistweaverco/kulala/releases/latest)
-or from the [website](https://getkulala.net/downloads).
+Grab the latest version from the
+[GitHub releases page](https://github.com/mistweaverco/kulala/releases/latest)!
 
 ## Development
 
