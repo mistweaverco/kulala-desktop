@@ -5,7 +5,7 @@
 # Kulala
 
 [![Made with love](assets/badge-made-with-love.svg)](https://github.com/mistweaverco/kulala/graphs/contributors)
-[![Downloads](https://img.shields.io/github/downloads/mistweaverco/kulala/total.svg?style=for-the-badge)](https://kulala.mwco.app/)
+[![Downloads](https://img.shields.io/github/downloads/mistweaverco/kulala/total.svg?style=for-the-badge)](https://kulala.app/)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/mistweaverco/kulala?style=for-the-badge)](https://github.com/mistweaverco/kulala/releases/latest)
 [![Discord](assets/badge-discord.svg)](https://mistweaverco.com/discord)
 
