@@ -44,7 +44,7 @@ No login 🌈, no tracking 🕵️‍♀️, No Ads 🔥, no BS 💩.
 ## Install
 
 Grab the latest version from the
-[GitHub releases page](https://github.com/mistweaverco/kulala/releases/latest)!
+[GitHub releases page](https://github.com/mistweaverco/kulala-desktop/releases/latest)!
 
 ## Development
 
