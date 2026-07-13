@@ -2,11 +2,11 @@
 
 ![Kulala Logo](logo.svg)
 
-# Kulala
+# Kulala Desktop
 
-[![Made with love](assets/badge-made-with-love.svg)](https://github.com/mistweaverco/kulala/graphs/contributors)
-[![Downloads](https://img.shields.io/github/downloads/mistweaverco/kulala/total.svg?style=for-the-badge)](https://kulala.app/)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/mistweaverco/kulala?style=for-the-badge)](https://github.com/mistweaverco/kulala/releases/latest)
+[![Made with love](assets/badge-made-with-love.svg)](https://github.com/mistweaverco/kulala-desktop/graphs/contributors)
+[![Downloads](https://img.shields.io/github/downloads/mistweaverco/kulala-desktop/total.svg?style=for-the-badge)](https://kulala.app/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/mistweaverco/kulala-desktop?style=for-the-badge)](https://github.com/mistweaverco/kulala-desktop/releases/latest)
 [![Discord](assets/badge-discord.svg)](https://mistweaverco.com/discord)
 
 [Install](#install) • [Website](https://kulala.app/) • [Usage](https://kulala.app/usage) • [Privacy Policy](./PRIVACY.md) • [Terms of Service](./TOS.md) • [Code of Conduct](./CODE_OF_CONDUCT.md)
@@ -32,8 +32,7 @@ No login 🌈, no tracking 🕵️‍♀️, No Ads 🔥, no BS 💩.
 [Kulala Formatter (and converter)][kulala-fmt] •
 [Kulala.nvim][kulala.nvim] •
 [Kulala for Visual Studio Code][kulala.vscode] •
-[Kulala Core][kulala-core]
-•
+[Kulala Core][kulala-core] •
 [Kulala Github Action][kulala-github-action]
 
 ---
